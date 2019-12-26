@@ -1,0 +1,39 @@
+parameters:
+  stageName: Example
+  linuxAgentVmImagePool: 'ubuntu-latest'
+  windowsAgentVmImagePool: 'windows-latest'
+  additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+
+
+jobs:
+
+- deployment: "${{parameters.stageName}}_Deployment"
+  pool: 
+    vmImage: ${{parameters.linuxAgentVmImagePool}}
+  environment: ${{parameters.stageName}}
+  variables:
+    deploymentVar: deploymentValue -- $(Api.Url)
+    ${{ each stageVariables in parameters.additionalVariables }}:
+      ${{ if eq(stageVariables.key, parameters.stageName) }}:
+        ${{insert}}: ${{ stageVariables.value }}
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: none
+        - bash: |
+            echo "Hello from ${{parameters.stageName}}"
+
+        - template: snippet-deploy.yml
+
+        - ${{ if eq(parameters.stageName, 'Dev') }}:
+          - template: snippet-smoke-tests.yml
+
+        - ${{ if eq(parameters.stageName, 'QA') }}:
+          - template: snippet-functional-tests.yml
+
+        - ${{ if eq(parameters.stageName, 'Stage') }}:
+          - template: snippet-integration-tests.yml
+
+        - ${{ if eq(parameters.stageName, 'Prod') }}:
+          - template: snippet-other-tests.yml

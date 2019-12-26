@@ -1,0 +1,268 @@
+parameters:
+  linuxAgentVmImagePool: 'ubuntu-latest'
+  windowsAgentVmImagePool: 'windows-latest'
+  buildType: '' # npm, gradle, maven, dotnet
+  displayPredefVariables: true
+  sonar: true
+  sonarEndpoint: sonarEndpointName # To override in project master.yml
+  sonarExclusions: '**/node_modules/**,**/*.spec.js,**/*.spec-ti.js,**/*.spec-ta.js,**/testresults/**' # comma separated list
+  sonarJsSourcesPath: src
+  sonarJsTestsPath: tests
+  sonarJsLcovCoverageReportPaths: 'testresults/coverage/lcov.info'
+  whitesource: true
+  whitesourceApiKey: 'you-must-specify-one' # Possible available values in the README.md
+  checkmarx: true
+  checkmarxEndpoint: checkmarxEndpointName # To override in project main.yml
+  checkmarxTeam: '' # To override in project main.yml
+  checkmarxPreset: ''
+  checkmarxHighThreshold: 0
+  checkmarxMediumThreshold: 0
+  checkmarxLowThreshold: 0
+  publishArtifacts: false
+  publishArtifactsContent: |
+     **/*
+     !log/**/*
+     !.git/**/*
+  logsArtifactsContent: '' # if the build produces log files, they can be published in a specific artifact by being specified here
+  initSteps: []
+  preScanSteps: []
+  finalSteps: []
+
+jobs:
+  - job: BuildScanPackageTest
+    pool:
+      vmImage: ${{parameters.linuxAgentVmImagePool}}
+
+    variables:
+      innerarg1: ${{parameters.arg1}}
+
+    steps:
+    - ${{ if eq(parameters.displayPredefVariables, 'true') }}:
+      - bash: |
+          echo "Parameter: ${{parameters.arg1}}"
+          echo "Variable: ${{variables.innerarg1}}"
+        displayName: 'Display predefined variable values'
+
+    - bash: |
+        set -e -o pipefail
+        shopt -s extglob
+
+        ########################## Branch dependent behavior
+
+        case $(Build.SourceBranch) in
+          ########################## MASTER ##########################
+          refs/heads/master)
+            branchTag=
+            branchStyle=master
+            incrScanSrcBranch= # useless
+            incrScanDestBranch= # useless
+            checkmarxDo=true
+            checkmarxQualityGate=true
+            whitesourceDo=true
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)
+            whitesourceQualityGate=true
+            ;;
+          ########################## RELEASE/* ##########################
+          refs/heads/release/*)
+            branchTag=$(echo $(Build.SourceBranch) | sed -e 's,refs/heads/release/,rel-,' | awk '{print tolower($0)}' | tr -cs '[a-z0-9\n]' '-')
+            branchStyle=shortLived
+            incrScanSrcBranch=$(Build.SourceBranchName)
+            incrScanDestBranch=master
+            checkmarxDo=true
+            checkmarxQualityGate=true
+            whitesourceDo=true
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=true
+            ;;
+          ########################## DEVELOP ##########################
+          refs/heads/develop)
+            branchTag=dev
+            branchStyle=longLived
+            incrScanSrcBranch=$(Build.SourceBranchName)
+            incrScanDestBranch= # useless
+            checkmarxDo=true
+            checkmarxQualityGate=false
+            whitesourceDo=true
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=false
+            ;;
+          ########################## PULL REQUEST ##########################
+          refs/pull/*/merge)
+            # PR_SOURCE_BRANCH and PR_TARGET_BRANCH are only required for (and defined by) triggerBuild.yml,
+            # so that in case of a PR build using multiple occurences of this template,
+            # the PR branch information is forwarded here properly.
+            # For the standard case, we just take as defaults values the content of the usual system variables
+            set +e
+            prSourceBranch=${PR_SOURCE_BRANCH:-$(System.PullRequest.SourceBranch)}
+            prTargetBranch=${PR_TARGET_BRANCH:-$(System.PullRequest.TargetBranch)}
+            set -e
+            if [ -z "${prSourceBranch}" ]; then
+              echo "##vso[task.logissue type=error]Manually building a refs/pull/*/merge branch is not supported. In the PR Overview tab, in the policy column, click the 3 dots at the right of the build item, and select Queue Build. Or just build your feature or bugfix branch."
+              exit 1
+            fi
+            branchTag=$(echo ${prSourceBranch} | sed -r -e 's,.*/([A-Z]+-[0-9]+).*,\1,' -e 's,.*/,,' | awk '{print tolower($0)}' | tr -cs '[a-z0-9\n]' '-')
+            branchStyle=shortLived
+            incrScanSrcBranch=$(echo ${prSourceBranch} | sed -r 's,.*/,,')
+            incrScanDestBranch=$(echo ${prTargetBranch} | sed -r 's,.*/,,')
+            checkmarxDo=true
+            checkmarxQualityGate=false
+            whitesourceDo=true
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=false
+
+            case "${prTargetBranch}" in
+              ########################## PULL REQUEST TO MASTER ##########################
+              refs/heads/master)
+                checkmarxQualityGate=true
+                whitesourceQualityGate=true
+              ;;
+            esac
+            ;;
+          ########################## HOTFIX/* ##########################
+          refs/heads/hotfix/+([A-Z])-+([0-9])*)
+            branchTag=$(echo $(Build.SourceBranch) | sed -r -e 's,.*/([A-Z]+-[0-9]+).*,\1,' | awk '{print tolower($0)}' | tr -cs '[a-z0-9\n]' '-')
+            branchStyle=shortLived
+            incrScanSrcBranch=$(Build.SourceBranchName)
+            incrScanDestBranch=master
+            checkmarxDo=false
+            checkmarxQualityGate=false
+            whitesourceDo=false
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=false
+            ;;
+          ########################## BUGFIX/* or FEATURE/* ##########################
+          refs/heads/?(bugfix/|feature/)+([A-Z])-+([0-9])*)
+            branchTag=$(echo $(Build.SourceBranch) | sed -r -e 's,.*/([A-Z]+-[0-9]+).*,\1,' | awk '{print tolower($0)}' | tr -cs '[a-z0-9\n]' '-')
+            branchStyle=shortLived
+            incrScanSrcBranch=$(Build.SourceBranchName)
+            incrScanDestBranch=develop
+            checkmarxDo=false
+            checkmarxQualityGate=false
+            whitesourceDo=false
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=false
+            ;;
+          ########################## DEFAULT ##########################
+          *)
+            branchTag=$( echo $(Build.SourceBranchName) | awk '{print tolower($0)}' | tr -cs '[a-z0-9\n]' '-')
+            branchStyle=shortLived
+            incrScanSrcBranch=$(Build.SourceBranchName)
+            incrScanDestBranch=develop
+            checkmarxDo=false
+            checkmarxQualityGate=false
+            whitesourceDo=false
+            #whitesourceScanVersion=$(versionExtractStep.componentVersion)-$branchTag
+            whitesourceQualityGate=false
+            ;;
+        esac
+
+        ########################## Branch logic post processing
+
+        ########################## Sonar
+        # Allow to override how sonar should consider this analysis
+        # (used to bootstrap a project, as we need to trigger an analysis for master and develop
+        # before we can do one on short lived branches)
+        # Passed manually from the GUI while starting a build
+        # Accepted values: master | develop
+        case '$(sonarBranch)' in
+          master)  branchStyle=master      incrScanSrcBranch=        ; incrScanDestBranch= ;;
+          develop) branchStyle=longLived ; incrScanSrcBranch=develop ; incrScanDestBranch= ;;
+        esac
+        echo  branchStyle: $branchStyle
+        echo incrScanSrcBranch:  $incrScanSrcBranch
+        echo incrScanDestBranch: $incrScanDestBranch
+        echo '##vso[task.setvariable variable=branchStyle;isOutput=true]'$branchStyle
+        echo '##vso[task.setvariable variable=incrScanSrcBranch;isOutput=true]'$incrScanSrcBranch
+        echo '##vso[task.setvariable variable=incrScanDestBranch;isOutput=true]'$incrScanDestBranch
+
+        ########################## Checkmarx
+        echo checkmarxDo: $checkmarxDo
+        echo checkmarxQualityGate: $checkmarxQualityGate
+        echo '##vso[task.setvariable variable=checkmarxDo;isOutput=true]'$checkmarxDo
+        echo '##vso[task.setvariable variable=checkmarxQualityGate;isOutput=true]'$checkmarxQualityGate
+
+        ########################## Whitesource
+        if [ "$(whitesource)" == "true" ] && [ '$(whitesourceApiKey)' == 'you-must-choose-one' ]; then
+          echo "##vso[task.logissue type=error]You must choose a valid Whitesource API key in your pipeline yml file, using the parameter 'whitesourceApiKey'. Possible values can be found in the template README.md."
+          exit 1
+        fi
+        echo whitesourceDo: $whitesourceDo
+        echo whitesourceQualityGate: $whitesourceQualityGate
+        echo Whitesource component version: $whitesourceScanVersion
+        echo '##vso[task.setvariable variable=whitesourceDo;isOutput=true]'$whitesourceDo
+        echo '##vso[task.setvariable variable=whitesourceQualityGate;isOutput=true]'$whitesourceQualityGate
+        echo '##vso[task.setvariable variable=whitesourceScanVersion;isOutput=true]'$whitesourceScanVersion
+
+      ########################## End of script
+      displayName: 'Compute branch related behaviors'
+      name: initStep
+
+    ##########################################################################
+    #                        USER INIT CUSTOM STEPS
+    ##########################################################################
+    - ${{parameters.initSteps}}
+
+    - template: snippet-build.yml
+      parameters:
+        arg1: ${{parameters.arg1}}
+
+    ##########################################################################
+    #                        USER PRE-SCANS CUSTOM STEPS
+    ##########################################################################
+    - ${{parameters.preScanSteps}}
+
+    ##########################################################################
+    #                                SONAR
+    ##########################################################################
+    - ${{ if eq(parameters.sonar, 'true') }}:
+      - template: snippet-sonarqube.yml
+
+    ##########################################################################
+    #                           WHITESOURCE
+    ##########################################################################
+    - ${{ if eq(parameters.whitesource, 'true') }}:
+      - template: snippet-whitesource.yml
+
+    ##########################################################################
+    #                           CHECKMARX
+    ##########################################################################
+    - ${{ if eq(parameters.checkmarx, 'true') }}:
+      - template: snippet-checkmarx.yml
+
+    ##########################################################################
+    #                           PUBLISH ARTIFACTS
+    ##########################################################################
+    - ${{ if and(eq(parameters.publishArtifacts, 'true'), ne(parameters.publishArtifactsContent, '')) }}:
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish build artifacts'
+        inputs:
+          pathtoPublish: '$(build.artifactstagingdirectory)/artifacts'
+          artifactName: $(artifactPrefix)artifacts
+        condition: succeeded()
+
+    - ${{ if ne(parameters.logsArtifactsContent, '') }}:
+
+      - task: CopyFiles@2
+        displayName: 'Copy log artifact files to the publish directory'
+        inputs:
+          SourceFolder: '${{parameters.artifactContentRootDir}}'
+          Contents: ${{parameters.logsArtifactsContent}}
+          TargetFolder: '$(build.artifactstagingdirectory)/logs'
+        condition: always()
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish logs artifacts'
+        inputs:
+          pathtoPublish: '$(build.artifactstagingdirectory)/logs'
+          artifactName: $(artifactPrefix)logs
+        condition: always()
+
+    ##########################################################################
+    #                        USER FINAL CUSTOM STEPS
+    ##########################################################################
+    - ${{parameters.finalSteps}}
+
+    ##########################################################################
+    #                               CLEAN UP
+    ##########################################################################

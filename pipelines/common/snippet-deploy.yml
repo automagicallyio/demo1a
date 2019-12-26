@@ -1,0 +1,7 @@
+steps:
+- bash: |
+    echo "install something"
+- bash: |
+    echo "deploy something"
+- bash: |
+    echo "config something"

@@ -1,0 +1,60 @@
+stages:
+
+- template: ../common/buildStage.yml
+  parameters:
+    templateSpecificsDir: app1
+    arg1: $(v1)
+    linuxAgentPool: 'ubuntu-latest'
+    additionalVariables: {arg1: $(v1)} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+  ###################### project specific resources ######################
+    sonarEndpoint: sonar1
+    checkmarxEndpoint: checkmarx1
+    checkmarxTeam: 'CxServer\SP\Company\CMF'
+    buildStage:
+      name: Build
+      variableGroups:
+      - kvApp1-Dev
+      variables:
+      - app1-dev
+  
+- template: ../common/releaseStage.yml
+  parameters:
+    templateSpecificsDir: app1
+    linuxAgentPool: 'ubuntu-latest'
+    additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+  ###################### project specific resources ######################
+    sonarEndpoint: sonar1
+    checkmarxEndpoint: checkmarx1
+    checkmarxTeam: 'CxServer\SP\Company\CMF'
+    releaseStages:
+  ###################### release develop branch ######################
+    - name: Dev
+      dependsOn: Build
+      branchCond: 'refs/heads/develop'
+      variableGroups:
+      - kvApp1-Dev
+      variables:
+      - app1-dev
+    - name: QA
+      dependsOn: Dev
+      branchCond: 'refs/heads/develop'
+      variableGroups:
+      - kvApp1-QA
+      variables:
+      - app1-qa
+  ###################### release master branch ######################
+    - name: Stage
+      dependsOn: Build
+      branchCond: 'refs/heads/master'
+      variableGroups:
+      - kvApp1-Stage
+      variables:
+      - app1-stage
+    - name: Prod
+      dependsOn: Stage
+      branchCond: 'refs/heads/master'
+      variableGroups:
+      - kvApp1-Prod
+      variables:
+      - app1-prod
+
