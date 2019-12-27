@@ -3,21 +3,22 @@ parameters:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+
 steps:
 - task: NuGetToolInstaller@0
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: '${{parameters.solution}}'
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
+    solution: '${{parameters.solution}}'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)/artifacts"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    platform: '${{parameters.buildPlatform}}'
+    configuration: '${{parameters.buildConfiguration}}'
 
 - task: VSTest@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    platform: '${{parameters.buildPlatform}}'
+    configuration: '${{parameters.buildConfiguration}}'
