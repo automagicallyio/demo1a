@@ -1,7 +1,10 @@
 steps:
 - bash: |
     echo "install something"
-- bash: |
-    echo "deploy something"
+displayName: 'Install'
+name: installStep
+
 - bash: |
     echo "config something"
+displayName: 'Configure'
+name: configureStep

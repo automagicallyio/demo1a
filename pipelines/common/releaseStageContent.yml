@@ -36,4 +36,4 @@ jobs:
           - template: snippet-integration-tests.yml
 
         - ${{ if eq(parameters.stageName, 'Prod') }}:
-          - template: snippet-other-tests.yml
+          - template: snippet-additional-tests.yml
