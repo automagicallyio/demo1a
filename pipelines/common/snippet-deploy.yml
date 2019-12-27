@@ -1,10 +1,10 @@
 steps:
-- bash: |
-    echo "install something"
-displayName: 'Install'
-name: installStep
+-   bash: |
+        echo "install something"
+    displayName: 'Install'
+    name: installStep
 
-- bash: |
-    echo "config something"
-displayName: 'Configure'
-name: configureStep
+-   bash: |
+        echo "config something"
+    displayName: 'Configure'
+    name: configureStep
