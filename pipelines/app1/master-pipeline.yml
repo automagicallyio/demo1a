@@ -4,7 +4,7 @@ stages:
   parameters:
     templateSpecificsDir: app1
     arg1: $(v1)
-    windowsAgentVmImagePool: 'windows-latest'
+    windowsAgentVmImagePool: 'VS2017-Win2016'
     additionalVariables: {arg1: $(v1)} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   ###################### project specific resources ######################
     sonarEndpoint: sonar1
@@ -20,7 +20,7 @@ stages:
 - template: ../common/releaseStage.yml
   parameters:
     templateSpecificsDir: app1
-    windowsAgentVmImagePool: 'windows-latest'
+    windowsAgentVmImagePool: 'VS2017-Win2016'
     additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   ###################### project specific resources ######################
     sonarEndpoint: sonar1

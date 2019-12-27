@@ -1,6 +1,6 @@
 parameters:
   linuxAgentPool:  'ubuntu-latest'
-  windowsAgentVmImagePool: 'windows-latest'
+  windowsAgentVmImagePool: 'VS2017-Win2016'
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   releaseStages:
   - name: Example
