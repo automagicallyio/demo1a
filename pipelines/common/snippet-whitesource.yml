@@ -1,5 +1,5 @@
 steps:
 -   bash: |
         echo "run whitesource scan"
-    displayName: 'Run Whitesource tests'
-    name: runWhitesourceTestsStep
+    displayName: 'Whitesource tests'
+    name: whitesourceTestsStep

@@ -1,5 +1,5 @@
 steps:
 -   bash: |
         echo "run additional tests"
-    displayName: 'Run additional tests'
-    name: runAdditionalTestsStep
+    displayName: 'Additional tests'
+    name: additionalTestsStep

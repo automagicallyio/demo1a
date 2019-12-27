@@ -1,5 +1,5 @@
 steps:
 -   bash: |
         echo "run integration tests"
-    displayName: 'Run integration tests'
-    name: runIntegrationTestsStep
+    displayName: 'Integration tests'
+    name: integrationTestsStep

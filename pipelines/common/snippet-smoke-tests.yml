@@ -1,5 +1,5 @@
 steps:
 -   bash: |
         echo "run smoke tests"
-    displayName: 'Run smoke tests'
-    name: runSmokeTestsStep
+    displayName: 'Smoke tests'
+    name: smokeTestsStep

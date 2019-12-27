@@ -21,8 +21,6 @@ jobs:
       deploy:
         steps:
         - checkout: none
-        - bash: |
-            echo "Hello from ${{parameters.stageName}}"
 
         - template: snippet-deploy.yml
 
