@@ -6,14 +6,10 @@ parameters:
 
 steps:
 - task: NuGetToolInstaller@0
-displayName: 'Install nuget tool'
-name: installNugetToolStep
 
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '${{parameters.solution}}'
-displayName: 'Restore nuget'
-name: restoreNugetStep
 
 - task: VSBuild@1
   inputs:
@@ -21,12 +17,8 @@ name: restoreNugetStep
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)/artifacts"'
     platform: '${{parameters.buildPlatform}}'
     configuration: '${{parameters.buildConfiguration}}'
-displayName: 'Build solution'
-name: buildSolutionStep
 
 - task: VSTest@2
   inputs:
     platform: '${{parameters.buildPlatform}}'
     configuration: '${{parameters.buildConfiguration}}'
-displayName: 'Test solution'
-name: testSolutionStep
