@@ -205,6 +205,9 @@ jobs:
     - template: snippet-build.yml
       parameters:
         arg1: ${{parameters.arg1}}
+        solution: '**/*.sln'
+        buildPlatform: 'Any CPU'
+        buildConfiguration: 'Release'
 
     ##########################################################################
     #                        USER PRE-SCANS CUSTOM STEPS
