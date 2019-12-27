@@ -1,5 +1,6 @@
 parameters:
   linuxAgentPool:  'ubuntu-latest'
+  windowsAgentVmImagePool: 'windows-latest'
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   releaseStages:
   - name: Example
@@ -31,5 +32,5 @@ stages:
       parameters:
         stageName: ${{stage.name}}
         pool:
-          vmImage: ${{parameters.linuxAgentPool}}
+          vmImage: ${{parameters.windowsAgentVmImagePool}}
         additionalVariables: ${{parameters.additionalVariables}}
