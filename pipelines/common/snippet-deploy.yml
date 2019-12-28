@@ -6,7 +6,6 @@ parameters:
 
 steps:
 - task: AzureRmWebAppDeployment@4
-    displayName: 'Azure App Service Deploy: ${{ parameters.webApp }}'
     inputs:
       azureSubscription: ${{ parameters.azureSub }}
       ResourceGroupName: ${{ parameters.webAppRG }}
