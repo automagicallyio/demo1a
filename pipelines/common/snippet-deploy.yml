@@ -15,3 +15,6 @@ steps:
     packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
     deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
     SlotName: ${{ parameters.slot }}
+    enableCustomDeployment: true
+    DeploymentType: 'webDeploy'
+    RemoveAdditionalFilesFlag: true
