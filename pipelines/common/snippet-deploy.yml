@@ -12,6 +12,6 @@ steps:
     ResourceGroupName: ${{ parameters.webAppRG }}
     WebAppName: ${{ parameters.webApp }}
     appType: 'webAppLinux'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
     deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
     SlotName: ${{ parameters.slot }}
