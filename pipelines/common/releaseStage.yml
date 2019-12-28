@@ -35,7 +35,7 @@ stages:
         webAppRG: 'demo1'
         webApp: 'demo1'
         slot: 'production'
-        artifactName: drop
+        artifactName: 'drop'
         pool:
           vmImage: ${{parameters.windowsAgentVmImagePool}}
         additionalVariables: ${{parameters.additionalVariables}}

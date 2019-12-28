@@ -7,7 +7,7 @@ stages:
   parameters:
     publishArtifacts: true
     artifactName: drop
-    templateSpecificsDir: PartsUnlimited
+    templateSpecificsDir: app1
     arg1: $(v1)
     windowsAgentVmImagePool: 'VS2017-Win2016'
     additionalVariables: {arg1: $(v1)} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
