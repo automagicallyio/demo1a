@@ -32,8 +32,8 @@ jobs:
         - template: snippet-deploy.yml
           parameters:
             azureSub: ${{parameters.azureSub}}
-            webAppRG: ${{parameters.webAppRG}}-${{parameters.stageName}}-webapp
-            webApp: ${{parameters.webApp}}-${{parameters.stageName}}
+            webAppRG: ${{parameters.webAppRG}}-${{parameters.stageName}}
+            webApp: ${{parameters.webApp}}-${{parameters.stageName}}-webapp
             slot: ${{parameters.slot}}
 
         - ${{ if eq(parameters.stageName, 'Dev') }}:
