@@ -2,9 +2,9 @@ parameters:
   stageName: ''
   environment: ''
   logicalEnvironment: dev
-  azureSub: ''
-  webAppRG: ''
-  webApp: ''
+  azureSub: 'automagically-azure'
+  webAppRG: 'demo1'
+  webApp: 'demo1'
   slot: 'production'
   linuxAgentVmImagePool: 'ubuntu-latest'
   windowsAgentVmImagePool: 'VS2017-Win2016'
@@ -33,9 +33,9 @@ jobs:
         - template: snippet-deploy.yml
           parameters:
             azureSub: ${{parameters.azureSub}}
-            webAppRG: $(RGPrefix)-${{parameters.stageName}}-webapp
-            webApp: $(WebAppPrefix)-${{parameters.stageName}}
-            slot: production
+            webAppRG: ${{parameters.webAppRG}}-${{parameters.stageName}}-webapp
+            webApp: ${{parameters.webApp}}-${{parameters.stageName}}
+            slot: ${{parameters.slot}}
 
         - ${{ if eq(parameters.stageName, 'Dev') }}:
           - template: snippet-smoke-tests.yml
