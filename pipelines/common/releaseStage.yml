@@ -34,6 +34,10 @@ stages:
     - template: releaseStageContent.yml
       parameters:
         stageName: ${{stage.name}}
+        azureSub: 'automagically-azure'
+        webAppRG: 'demo1'
+        webApp: 'demo1'
+        slot: 'production'
         pool:
           vmImage: ${{parameters.windowsAgentVmImagePool}}
         additionalVariables: ${{parameters.additionalVariables}}
