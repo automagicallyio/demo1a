@@ -2,9 +2,9 @@ parameters:
   stageName: ''
   environment: ''
   logicalEnvironment: dev
+  azureSub: ''
   webAppRG: ''
   webApp: ''
-  azureSub: ''
   slot: 'production'
   linuxAgentVmImagePool: 'ubuntu-latest'
   windowsAgentVmImagePool: 'VS2017-Win2016'
@@ -20,9 +20,6 @@ jobs:
     vmImage: ${{parameters.linuxAgentVmImagePool}}
   environment: ${{parameters.stageName}}
   variables:
-    RGPrefix: demo1
-    WebAppPrefix: demo1
-    AzureSubscription: automagically-azure
     deploymentVar: deploymentValue -- $(Api.Url)
     ${{ each stageVariables in parameters.additionalVariables }}:
       ${{ if eq(stageVariables.key, parameters.stageName) }}:
@@ -35,7 +32,7 @@ jobs:
 
         - template: snippet-deploy.yml
           parameters:
-            azureSub: $(AzureSubscription)
+            azureSub: ${{parameters.azureSub}}
             webAppRG: $(RGPrefix)-${{parameters.stageName}}-webapp
             webApp: $(WebAppPrefix)-${{parameters.stageName}}
             slot: production
