@@ -30,7 +30,7 @@ stages:
     jobs:
     - template: releaseStageContent.yml
       parameters:
-        stageName: ${{stage.name}}
+        environment: ${{environment.name}}
         pool:
           vmImage: ${{parameters.windowsAgentVmImagePool}}
         additionalVariables: ${{parameters.additionalVariables}}
