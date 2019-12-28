@@ -10,9 +10,6 @@ parameters:
   linuxAgentVmImagePool: 'ubuntu-latest'
   windowsAgentVmImagePool: 'VS2017-Win2016'
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, environment1: {...}, environment2: {...} ...}
-  downloadSteps:
-  - download: current
-    artifact: ${{parameters.artifactName}}
 
 jobs:
 
@@ -29,7 +26,8 @@ jobs:
     runOnce:
       deploy:
         steps:
-        - ${{ parameters.downloadSteps }}
+        - download: current
+          artifact: ${{parameters.artifactName}}
 
         - template: snippet-deploy.yml
           parameters:
