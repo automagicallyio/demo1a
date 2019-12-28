@@ -1,5 +1,7 @@
 parameters:
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}}
+  publishArtifacts: true
+  artifactName: drop
 
 stages:
 
@@ -15,4 +17,5 @@ stages:
   jobs:
   - template: buildStageContent.yml
     parameters:
-      ${{ insert }}: ${{parameters}}
+      publishArtifacts: ${{parameters.publishArtifacts}}
+      artifactName: ${{parameters.artifactName}}

@@ -18,12 +18,8 @@ parameters:
   checkmarxHighThreshold: 0
   checkmarxMediumThreshold: 0
   checkmarxLowThreshold: 0
-  publishArtifacts: false
-  publishArtifactsContent: |
-     **/*
-     !log/**/*
-     !.git/**/*
-  logsArtifactsContent: '' # if the build produces log files, they can be published in a specific artifact by being specified here
+  publishArtifacts: true
+  artifactName: drop
   initSteps: []
   preScanSteps: []
   finalSteps: []
@@ -235,31 +231,14 @@ jobs:
     ##########################################################################
     #                           PUBLISH ARTIFACTS
     ##########################################################################
-    - ${{ if and(eq(parameters.publishArtifacts, 'true'), ne(parameters.publishArtifactsContent, '')) }}:
+    - ${{ if eq(parameters.publishArtifacts, 'true') }}:
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publish build artifacts'
         inputs:
-          pathtoPublish: '$(build.artifactstagingdirectory)/artifacts'
-          artifactName: $(artifactPrefix)artifacts
+          pathtoPublish: '$(build.artifactstagingdirectory)'
+          artifactName:  ${{parameters.artifactName}}
         condition: succeeded()
-
-    - ${{ if ne(parameters.logsArtifactsContent, '') }}:
-
-      - task: CopyFiles@2
-        displayName: 'Copy log artifact files to the publish directory'
-        inputs:
-          SourceFolder: '${{parameters.artifactContentRootDir}}'
-          Contents: ${{parameters.logsArtifactsContent}}
-          TargetFolder: '$(build.artifactstagingdirectory)/logs'
-        condition: always()
-
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish logs artifacts'
-        inputs:
-          pathtoPublish: '$(build.artifactstagingdirectory)/logs'
-          artifactName: $(artifactPrefix)logs
-        condition: always()
 
     ##########################################################################
     #                        USER FINAL CUSTOM STEPS
