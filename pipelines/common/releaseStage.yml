@@ -2,6 +2,9 @@ parameters:
   linuxAgentPool:  'ubuntu-latest'
   windowsAgentVmImagePool: 'VS2017-Win2016'
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+  downloadSteps:
+  - download: current
+    artifact: drop
   releaseStages:
   - name: Example
     dependsOn: AnotherStage

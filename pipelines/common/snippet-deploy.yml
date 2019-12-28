@@ -1,22 +1,17 @@
 parameters:
-  environment: ''
-  logicalEnvironment: dev
+  azureSub: ''
   webAppRG: ''
   webApp: ''
-  azureSub: ''
   slot: 'production'
-  downloadSteps:
-  - download: current
-    artifact: drop
 
 steps:
 - task: AzureRmWebAppDeployment@4
+    displayName: 'Azure App Service Deploy: ${{ parameters.webApp }}'
     inputs:
       azureSubscription: ${{ parameters.azureSub }}
       ResourceGroupName: ${{ parameters.webAppRG }}
       WebAppName: ${{ parameters.webApp }}
       appType: 'webAppLinux'
-      packageForLinux: $(Package)
+      packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
       deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
       SlotName: ${{ parameters.slot }}
-    displayName: 'Azure App Service Deploy: ${{ parameters.webApp }}'

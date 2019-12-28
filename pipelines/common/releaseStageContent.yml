@@ -35,12 +35,10 @@ jobs:
 
         - template: snippet-deploy.yml
           parameters:
-            environment: ${{parameters.stageName}}
-            logicalEnvironment: ${{parameters.stageName}}
-            slot: production
+            azureSub: $(AzureSubscription)
             webAppRG: $(RGPrefix)-${{parameters.stageName}}-webapp
             webApp: $(WebAppPrefix)-${{parameters.stageName}}
-            azureSub: $(AzureSubscription)
+            slot: production
 
         - ${{ if eq(parameters.stageName, 'Dev') }}:
           - template: snippet-smoke-tests.yml
