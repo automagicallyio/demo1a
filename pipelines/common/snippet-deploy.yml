@@ -6,11 +6,12 @@ parameters:
 
 steps:
 - task: AzureRmWebAppDeployment@4
-    inputs:
-      azureSubscription: ${{ parameters.azureSub }}
-      ResourceGroupName: ${{ parameters.webAppRG }}
-      WebAppName: ${{ parameters.webApp }}
-      appType: 'webAppLinux'
-      packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
-      deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
-      SlotName: ${{ parameters.slot }}
+  displayName: 'Azure App Service Deploy: ${{ parameters.webApp }}'
+  inputs:
+    azureSubscription: ${{ parameters.azureSub }}
+    ResourceGroupName: ${{ parameters.webAppRG }}
+    WebAppName: ${{ parameters.webApp }}
+    appType: 'webAppLinux'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
+    SlotName: ${{ parameters.slot }}
