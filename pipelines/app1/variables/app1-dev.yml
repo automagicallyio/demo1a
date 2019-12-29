@@ -1,5 +1,0 @@
-variables:
-- name: var1
-  value: dev1
-- name: var2
-  value: dev2

@@ -1,5 +1,0 @@
-steps:
--   bash: |
-        echo "do checkmarx scan"
-    displayName: 'Checkmarx scan'
-    name: checkmarxScanStep

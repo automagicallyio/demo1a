@@ -1,5 +1,0 @@
-steps:
--   bash: |
-        echo "run sonarqube scan"
-    displayName: 'SonarQube scan'
-    name: sonarqubeScanStep

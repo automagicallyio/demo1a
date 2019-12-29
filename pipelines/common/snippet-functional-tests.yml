@@ -1,5 +1,0 @@
-steps:
--   bash: |
-        echo "run functional tests"
-    displayName: 'Functional tests'
-    name: functionalTestsStep

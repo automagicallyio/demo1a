@@ -1,0 +1,73 @@
+resources:
+  repositories:
+  - repository: 'templates'
+    type: 'git'
+    name: 'ops\pipelines'
+    ref: 'refs/heads/master'
+
+variables:
+  system.debug: true
+  
+stages:
+
+- template: common/buildStage.yml@templates
+  parameters:
+    publishArtifacts: true
+    artifactName: drop
+    templateSpecificsDir: app1
+    arg1: $(v1)
+    linuxAgentVmImagePool: 'ubuntu-latest'
+    windowsAgentVmImagePool: 'windows-latest'
+    additionalVariables: {arg1: $(v1)} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+  ###################### project specific resources ######################
+    sonarEndpoint: sonar1
+    checkmarxEndpoint: checkmarx1
+    checkmarxTeam: 'CxServer\SP\Company\xxx'
+    buildStage:
+      name: Build
+      variableGroups:
+      - kvApp1-Dev
+      variables:
+      - app1-dev
+  
+- template: common/releaseStage.yml@templates
+  parameters:
+    templateSpecificsDir: app1
+    linuxAgentVmImagePool: 'ubuntu-latest'
+    windowsAgentVmImagePool: 'windows-latest'
+    additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
+  ###################### project specific resources ######################
+    sonarEndpoint: sonar1
+    checkmarxEndpoint: checkmarx1
+    checkmarxTeam: 'CxServer\SP\Company\xxx'
+    releaseStages:
+  ###################### release develop branch ######################
+    - name: Dev
+      dependsOn: Build
+      branchCond: 'refs/heads/develop'
+      variableGroups:
+      - kvApp1-Dev
+      variables:
+      - app1-dev
+    - name: QA
+      dependsOn: Dev
+      branchCond: 'refs/heads/develop'
+      variableGroups:
+      - kvApp1-QA
+      variables:
+      - app1-qa
+  ###################### release master branch ######################
+    - name: Stage
+      dependsOn: Build
+      branchCond: 'refs/heads/master'
+      variableGroups:
+      - kvApp1-Stage
+      variables:
+      - app1-stage
+    - name: Prod
+      dependsOn: Stage
+      branchCond: 'refs/heads/master'
+      variableGroups:
+      - kvApp1-Prod
+      variables:
+      - app1-prod

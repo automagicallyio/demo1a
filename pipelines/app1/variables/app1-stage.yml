@@ -1,5 +1,0 @@
-variables:
-- name: var1
-  value: stage1
-- name: var2
-  value: stage2
