@@ -1,5 +1,0 @@
-variables:
-- name: var1
-  value: prod1
-- name: var2
-  value: prod2

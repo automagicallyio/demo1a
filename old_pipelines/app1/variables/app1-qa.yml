@@ -1,5 +1,0 @@
-variables:
-- name: var1
-  value: qa1
-- name: var2
-  value: qa2
