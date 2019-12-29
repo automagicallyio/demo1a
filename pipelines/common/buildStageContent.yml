@@ -1,6 +1,6 @@
 parameters:
   linuxAgentVmImagePool: 'ubuntu-latest'
-  windowsAgentVmImagePool: 'VS2017-Win2016'
+  windowsAgentVmImagePool: 'windows-latest'
   buildType: '' # npm, gradle, maven, dotnet
   displayPredefVariables: true
   sonar: true
