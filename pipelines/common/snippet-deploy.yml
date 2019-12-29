@@ -11,7 +11,7 @@ steps:
     azureSubscription: ${{ parameters.azureSub }}
     ResourceGroupName: ${{ parameters.webAppRG }}
     location: 'Canada Central'
-    csmFile: '$(System.DefaultWorkingDirectory)/**/linux-webapp-template.json'
+    csmFile: '$(Pipeline.Workspace)/**/linux-webapp-template.json'
     overrideParameters: '-webAppName ${{ parameters.webApp }} -hostingPlanName automagically-demo1-app-plan -appInsightsLocation "Canada Central" -sku "S1 Standard"'
 
 - task: AzureRmWebAppDeployment@4
