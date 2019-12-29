@@ -201,9 +201,7 @@ jobs:
     - template: snippet-build.yml
       parameters:
         arg1: ${{parameters.arg1}}
-        solution: '**/*.csproj'
-        buildPlatform: 'Any CPU'
-        buildConfiguration: 'Release'
+        projects: '**/*.csproj'
 
     ##########################################################################
     #                        USER PRE-SCANS CUSTOM STEPS

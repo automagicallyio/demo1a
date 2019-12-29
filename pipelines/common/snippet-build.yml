@@ -1,29 +1,26 @@
 parameters:
   arg1: ''
-  solution: '**/*.csproj'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  projects: '**/*.csproj'
 
 steps:
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
     command: restore
-    projects: '$(parameters.solution)'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+    projects: '$(parameters.projects)'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: '$(parameters.solution)'
-    arguments: '--configuration $(parameters.buildConfiguration)'
-  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+    projects: '$(parameters.projects)'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
   displayName: Publish
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--configuration $(parameters.buildConfiguration) --output "$(build.artifactstagingdirectory)"'
+    arguments: '--output "$(build.artifactstagingdirectory)"'
     zipAfterPublish: True
-  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
