@@ -12,7 +12,7 @@ namespace app1.Pages
 
         public void OnGet()
         {
-            Message = "Your application description page.";
+            Message = "Description goes here.";
         }
     }
 }

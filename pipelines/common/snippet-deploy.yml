@@ -5,6 +5,15 @@ parameters:
   slot: 'production'
 
 steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Azure Deployment:Create Azure App Service'
+  inputs:
+    azureSubscription: ${{ parameters.azureSub }}
+    ResourceGroupName: ${{ parameters.webAppRG }}
+    location: 'Canada Central'
+    csmFile: '$(System.DefaultWorkingDirectory)/**/linux-webapp-template.json'
+    overrideParameters: '-webAppName ${{ parameters.webApp }} -hostingPlanName automagically-demo1-app-plan -appInsightsLocation "Canada Central" -sku "S1 Standard"'
+
 - task: AzureRmWebAppDeployment@4
   displayName: 'Deploy Azure App Service: ${{ parameters.webApp }}'
   inputs:

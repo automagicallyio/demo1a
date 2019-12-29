@@ -1,6 +1,8 @@
 parameters:
   arg1: ''
   projects: '**/*.csproj'
+  buildConfiguration: 'Any CPU'
+  buildPlatform: 'Release'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -14,6 +16,7 @@ steps:
   displayName: Build
   inputs:
     projects: '${{ parameters.projects }}'
+    arguments: '--configuration ${{ parameters.buildConfiguration }}'
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
@@ -21,6 +24,6 @@ steps:
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--output "$(build.artifactstagingdirectory)"'
+    arguments: '--configuration ${{ parameters.buildConfiguration }} --output "$(build.artifactstagingdirectory)"'
     zipAfterPublish: True
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'

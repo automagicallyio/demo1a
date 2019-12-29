@@ -202,6 +202,8 @@ jobs:
       parameters:
         arg1: ${{parameters.arg1}}
         projects: '**/*.csproj'
+        buildPlatform: 'Any CPU'
+        buildConfiguration: 'Release'
 
     ##########################################################################
     #                        USER PRE-SCANS CUSTOM STEPS
@@ -230,6 +232,13 @@ jobs:
     #                           PUBLISH ARTIFACTS
     ##########################################################################
     - ${{ if eq(parameters.publishArtifacts, 'true') }}:
+
+      - task: CopyFiles@2
+        displayName: 'Copy ARM templates'
+        inputs:
+          SourceFolder: '$(System.DefaultWorkingDirectory)\pipelines\common'
+          Contents: 'linux-webapp-template.json'
+          TargetFolder: '$(build.artifactstagingdirectory)'
 
       - task: PublishBuildArtifacts@1
         displayName: 'Publish build artifacts'
