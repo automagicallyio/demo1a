@@ -20,5 +20,12 @@ steps:
 
 - task: VSTest@2
   inputs:
-    platform: '${{parameters.buildPlatform}}'
-    configuration: '${{parameters.buildConfiguration}}'
+    testAssemblyVer2: |
+      **\*unittest*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    codeCoverageEnabled: true
+    platform: ${{ parameters.buildPlatform }}
+    configuration: ${{ parameters.buildConfiguration }}
+    diagnosticsEnabled: true
+    searchFolder: $(System.DefaultWorkingDirectory)
