@@ -7,13 +7,13 @@ steps:
   displayName: Restore
   inputs:
     command: restore
-    projects: '$(parameters.projects)'
+    projects: '${{ parameters.projects }}'
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: '$(parameters.projects)'
+    projects: '${{ parameters.projects }}'
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
