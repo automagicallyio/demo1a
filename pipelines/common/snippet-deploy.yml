@@ -6,15 +6,16 @@ parameters:
 
 steps:
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: ${{ parameters.webApp }}'
+  displayName: 'Deploy Azure App Service: ${{ parameters.webApp }}'
   inputs:
     azureSubscription: ${{ parameters.azureSub }}
     ResourceGroupName: ${{ parameters.webAppRG }}
     WebAppName: ${{ parameters.webApp }}
     appType: 'webAppLinux'
+    RuntimeStack: 'dotnetcore|2.2'
+    StartupCommand: 'dotnet aspnet-core-dotnet-core.dll'
     packageForLinux: '$(Pipeline.Workspace)/**/*.zip'
     deployToSlotOrASE: ${{ ne(parameters.slot, 'production') }}
     SlotName: ${{ parameters.slot }}
     enableCustomDeployment: true
-    DeploymentType: 'webDeploy'
-    RemoveAdditionalFilesFlag: true
+    ExcludeFilesFromAppDataFlag: false

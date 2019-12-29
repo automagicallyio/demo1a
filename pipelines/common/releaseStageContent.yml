@@ -7,7 +7,7 @@ parameters:
   webApp: ''
   slot: ''
   artifactName: 'drop'
-  linuxAgentVmImagePool: 'ubuntu-latest'
+  linuxAgentVmImagePool: 'ubuntu-16.04'
   windowsAgentVmImagePool: 'windows-latest'
   additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, environment1: {...}, environment2: {...} ...}
 

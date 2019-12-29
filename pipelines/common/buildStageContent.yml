@@ -1,5 +1,5 @@
 parameters:
-  linuxAgentVmImagePool: 'ubuntu-latest'
+  linuxAgentVmImagePool: 'ubuntu-16.04'
   windowsAgentVmImagePool: 'windows-latest'
   buildType: '' # npm, gradle, maven, dotnet
   displayPredefVariables: true
