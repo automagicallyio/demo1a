@@ -9,7 +9,8 @@ stages:
     artifactName: drop
     templateSpecificsDir: app1
     arg1: $(v1)
-    windowsAgentVmImagePool: 'VS2017-Win2016'
+    linuxAgentVmImagePool: 'ubuntu-latest'
+    windowsAgentVmImagePool: 'windows-latest'
     additionalVariables: {arg1: $(v1)} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   ###################### project specific resources ######################
     sonarEndpoint: sonar1
@@ -25,7 +26,8 @@ stages:
 - template: ../common/releaseStage.yml
   parameters:
     templateSpecificsDir: app1
-    windowsAgentVmImagePool: 'VS2017-Win2016'
+    linuxAgentVmImagePool: 'ubuntu-latest'
+    windowsAgentVmImagePool: 'windows-latest'
     additionalVariables: {} # {__default__: {var1: val1, var2: val2, ...}, stageName1: {...}, stageName2: {...} ...}
   ###################### project specific resources ######################
     sonarEndpoint: sonar1

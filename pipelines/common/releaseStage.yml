@@ -37,5 +37,5 @@ stages:
         slot: 'production'
         artifactName: 'drop'
         pool:
-          vmImage: ${{parameters.windowsAgentVmImagePool}}
+          vmImage: ${{parameters.linuxAgentVmImagePool}}
         additionalVariables: ${{parameters.additionalVariables}}

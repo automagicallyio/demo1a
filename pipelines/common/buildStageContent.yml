@@ -27,7 +27,7 @@ parameters:
 jobs:
   - job: BuildScanPackageTest
     pool:
-      vmImage: ${{parameters.windowsAgentVmImagePool}}
+      vmImage: ${{parameters.linuxAgentVmImagePool}}
 
     variables:
       innerarg1: ${{parameters.arg1}}
