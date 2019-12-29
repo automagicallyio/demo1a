@@ -1,22 +1,29 @@
 parameters:
-  arg1: ''
-  projects: '**/*.csproj'
   buildConfiguration: 'Any CPU'
   buildPlatform: 'Release'
+  arg1: ''
 
 steps:
 - task: DotNetCoreCLI@2
   displayName: Restore
   inputs:
     command: restore
-    projects: '${{ parameters.projects }}'
+    projects: '**/*.csproj'
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    projects: '${{ parameters.projects }}'
-    arguments: '--configuration ${{ parameters.buildConfiguration }}'
+    projects: '**/*.csproj'
+    arguments: '--configuration ${{ parameters.BuildConfiguration }}'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: test
+    projects: '**/*UnitTests/*.csproj'
+    arguments: '--configuration ${{ parameters.BuildConfiguration }}'
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
 - task: DotNetCoreCLI@2
@@ -24,6 +31,25 @@ steps:
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--configuration ${{ parameters.buildConfiguration }} --output "$(build.artifactstagingdirectory)"'
+    arguments: '--configuration ${{ parameters.BuildConfiguration }} --output "$(build.artifactstagingdirectory)"'
     zipAfterPublish: True
     workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish functional tests'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: '**/*FunctionalTest*.csproj'
+    arguments: '--configuration ${{ parameters.BuildConfiguration }} --output "$(build.artifactstagingdirectory)/FunctionalTests"'
+    zipAfterPublish: false
+    modifyOutputPath: false
+    workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
+
+- task: CopyFiles@2
+  displayName: 'Copy runsettings file'
+  inputs:
+    Contents: '**/*.runsettings'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/FunctionalTests'
+    flattenFolders: true
+
