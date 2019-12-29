@@ -201,7 +201,7 @@ jobs:
     - template: snippet-build.yml
       parameters:
         arg1: ${{parameters.arg1}}
-        solution: '**/app1/app1.sln'
+        solution: '**/*.csproj'
         buildPlatform: 'Any CPU'
         buildConfiguration: 'Release'
 

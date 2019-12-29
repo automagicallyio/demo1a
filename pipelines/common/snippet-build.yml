@@ -1,31 +1,29 @@
 parameters:
   arg1: ''
-  solution: '**/*.sln'
+  solution: '**/*.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: Restore
   inputs:
-    restoreSolution: '${{parameters.solution}}'
+    command: restore
+    projects: '$(parameters.solution)'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: Build
   inputs:
-    solution: '${{parameters.solution}}'
-    msbuildArgs: /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)\\"
-    platform: '${{parameters.buildPlatform}}'
-    configuration: '${{parameters.buildConfiguration}}'
+    projects: '$(parameters.solution)'
+    arguments: '--configuration $(parameters.buildConfiguration)'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: Publish
   inputs:
-    testAssemblyVer2: |
-      **\*unittest*.dll
-      !**\*TestAdapter.dll
-      !**\obj\**
-    codeCoverageEnabled: true
-    platform: ${{ parameters.buildPlatform }}
-    configuration: ${{ parameters.buildConfiguration }}
-    diagnosticsEnabled: true
-    searchFolder: $(System.DefaultWorkingDirectory)
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(parameters.buildConfiguration) --output "$(build.artifactstagingdirectory)"'
+    zipAfterPublish: True
+  workingDirectory: '$(System.DefaultWorkingDirectory)/app1'
