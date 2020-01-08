@@ -3,7 +3,7 @@ resources:
   - repository: 'templates'
     type: 'git'
     name: 'ops\pipelines'
-    ref: 'refs/heads/test'
+    ref: 'refs/heads/master'
 
 variables:
   system.debug: true
