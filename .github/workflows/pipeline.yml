@@ -18,7 +18,7 @@ jobs:
       run: dotnet build app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }}
 
     - name: Publish
-      run: dotnet publish app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}"
+      run: dotnet publish app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}/app"
 
     - name: Publish functional tests
       run: dotnet publish app1/aspnet-core-dotnet-core.FunctionalTests/aspnet-core-dotnet-core.FunctionalTests.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}/FunctionalTests"
@@ -33,7 +33,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: app
-        path: "*.zip"
+        path: app/
 
     - name: Publish Artifact FunctionalTests
       uses: actions/upload-artifact@v2
