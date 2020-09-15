@@ -27,10 +27,14 @@ jobs:
       run: cp -v app1/aspnet-core-dotnet-core.FunctionalTests/functionalTests.runsettings FunctionalTests/functionalTests.runsettings
 
     - name: 'Copy environment ARM template files'
-      run: cp -rv template ARMTemplates
+      run: cp -rv templates ARMTemplates
       
     - name: Publish Artifact
       uses: actions/upload-artifact@v2
       with:
-        path: ${GITHUB_WORKSPACE}
+        path: ${GITHUB_WORKSPACE}/FunctionalTests
                     
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${GITHUB_WORKSPACE}/ARMTemplates
