@@ -7,25 +7,33 @@ env:
   buildConfiguration: Release
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+
     - name: Restore
       run: dotnet restore app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj
+
     - name: Build
-      run: dotnet app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.BuildConfiguration }}
+      run: dotnet app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }}
+
     - name: Test
-      run: dotnet test app1/aspnet-core-dotnet-core.UnitTests/aspnet-core-dotnet-core.UnitTests.csproj --configuration ${{ env.BuildConfiguration }}
+      run: dotnet test app1/aspnet-core-dotnet-core.UnitTests/aspnet-core-dotnet-core.UnitTests.csproj --configuration ${{ env.buildConfiguration }}
+
     - name: Publish
-      run: dotnet publish --configuration ${{ env.BuildConfiguration }} --output "${GITHUB_WORKSPACE}"
+      run: dotnet publish --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}"
+
     - name: Publish functional tests
-      run: dotnet publish app1/aspnet-core-dotnet-core.FunctionalTests/aspnet-core-dotnet-core.FunctionalTests.csproj --configuration ${{ env.BuildConfiguration }} --output "${GITHUB_WORKSPACE}/FunctionalTests"
+      run: dotnet publish app1/aspnet-core-dotnet-core.FunctionalTests/aspnet-core-dotnet-core.FunctionalTests.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}/FunctionalTests"
+
     - name: 'Copy runsettings file to: ${GITHUB_WORKSPACE}'
       run: Copy '${{ env.system.defaultworkingdirectory }}\MyProject\MyProject.ARMTemplates/**\*' '${GITHUB_WORKSPACE}\FunctionalTests'
-      shell: powershell      
+      shell: powershell
+
     - name: 'Copy environment ARM template files to: ${GITHUB_WORKSPACE}'
       run: Copy '${{ env.system.defaultworkingdirectory }}\MyProject\MyProject.ARMTemplates/**\*' '${GITHUB_WORKSPACE}\ARMTemplates'
       shell: powershell
+      
     - name: Publish Artifact
       uses: actions/upload-artifact@v2
       with:
