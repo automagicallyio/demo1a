@@ -28,7 +28,13 @@ jobs:
 
     - name: 'Copy environment ARM template files'
       run: cp -rv templates ARMTemplates
-      
+
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: "*.zip"
+
     - name: Publish Artifact FunctionalTests
       uses: actions/upload-artifact@v2
       with:
