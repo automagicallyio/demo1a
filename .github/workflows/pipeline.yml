@@ -24,12 +24,16 @@ jobs:
       run: dotnet publish app1/aspnet-core-dotnet-core.FunctionalTests/aspnet-core-dotnet-core.FunctionalTests.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}/FunctionalTests"
 
     - name: 'Copy runsettings file to: ${GITHUB_WORKSPACE}'
-      run: cp -v '${GITHUB_WORKSPACE}/app1/aspnet-core-dotnet-core.FunctionalTests/functionalTests.runsettings' '${GITHUB_WORKSPACE}/FunctionalTests'
-      shell: sh
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: ${GITHUB_WORKSPACE}/app1/aspnet-core-dotnet-core.FunctionalTests/functionalTests.runsettings
+        target: ${GITHUB_WORKSPACE}/FunctionalTests/functionalTests.runsettings
 
     - name: 'Copy environment ARM template files to: ${GITHUB_WORKSPACE}'
-      run: cp -rv '${GITHUB_WORKSPACE}/template' '${GITHUB_WORKSPACE}/ARMTemplates'
-      shell: sh
+      uses: MadaraUchiha/copy-action@0.0.1
+      with:
+        source: ${{ env.system.defaultworkingdirectory }}/templates
+        target: ${GITHUB_WORKSPACE}/ARMTemplates
       
     - name: Publish Artifact
       uses: actions/upload-artifact@v2
