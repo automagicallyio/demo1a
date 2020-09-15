@@ -17,9 +17,6 @@ jobs:
     - name: Build
       run: dotnet build app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }}
 
-    - name: Test
-      run: dotnet test app1/aspnet-core-dotnet-core.UnitTests/aspnet-core-dotnet-core.UnitTests.csproj --configuration ${{ env.buildConfiguration }}
-
     - name: Publish
       run: dotnet publish app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }} --output "${GITHUB_WORKSPACE}"
 
