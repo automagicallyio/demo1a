@@ -1,0 +1,33 @@
+name: demo1a
+
+on: [push]
+env:
+  solution: '**/*.csproj'
+  buildPlatform: Any CPU
+  buildConfiguration: Release
+jobs:
+  build:
+    runs-on: Hosted Ubuntu 1604
+    steps:
+    - uses: actions/checkout@v2
+    - name: Restore
+      run: dotnet restore **/*.csproj
+    - name: Build
+      run: dotnet **/*.csproj --configuration ${{ env.BuildConfiguration }}
+    - name: Test
+      run: dotnet test **/*UnitTests/*.csproj --configuration ${{ env.BuildConfiguration }}
+    - name: Publish
+      run: dotnet publish --configuration ${{ env.BuildConfiguration }} --output "${GITHUB_WORKSPACE}"
+    - name: Publish functional tests
+      run: dotnet publish **/*FunctionalTest*.csproj --configuration ${{ env.BuildConfiguration }} --output "${GITHUB_WORKSPACE}/FunctionalTests"
+    - name: Copy runsettings file
+      run: Copy '/**/*.runsettings' '${{ env.Build.ArtifactStagingDirectory }}/FunctionalTests'
+      shell: powershell
+    - name: Copy ARM templates
+      run: Copy 'templates/' '${GITHUB_WORKSPACE}'
+      shell: powershell
+    - name: Publish Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${GITHUB_WORKSPACE}
+                    
