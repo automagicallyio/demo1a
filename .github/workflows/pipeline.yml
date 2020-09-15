@@ -15,7 +15,7 @@ jobs:
       run: dotnet restore app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj
 
     - name: Build
-      run: dotnet app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }}
+      run: dotnet build app1/aspnet-core-dotnet-core/aspnet-core-dotnet-core.csproj --configuration ${{ env.buildConfiguration }}
 
     - name: Test
       run: dotnet test app1/aspnet-core-dotnet-core.UnitTests/aspnet-core-dotnet-core.UnitTests.csproj --configuration ${{ env.buildConfiguration }}
