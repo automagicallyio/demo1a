@@ -29,7 +29,7 @@ jobs:
     - name: 'Copy environment ARM template files'
       run: cp -rv templates ARMTemplates
 
-    - name: Publish Artifact
+    - name: Publish Artifact App
       uses: actions/upload-artifact@v2
       with:
         name: app
